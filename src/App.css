@@ -1,0 +1,244 @@
+.formContainer {
+	background: white;
+	border-radius: 16px;
+	padding: 1.5rem;
+	margin-bottom: 1rem;
+	box-shadow: 0 4px 20px rgba(8, 8, 8, 0.1);
+}
+
+.formContainer h3 {
+	color: #000000;
+	margin-bottom: 1rem;
+	font-size: 1.2rem;
+}
+
+.form {
+	display: flex;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.inputGroup {
+	display: flex;
+	flex-direction: column;
+	gap: 0.25rem;
+}
+
+.input,
+.textarea {
+	padding: 10px 12px;
+	border: 2px solid #e0e0e0;
+	border-radius: 10px;
+	font-size: 0.95rem;
+	font-family: inherit;
+	transition: border-color 0.3s;
+}
+
+.input:focus,
+.textarea:focus {
+	outline: none;
+	border-color: #667eea;
+}
+
+.errorInput {
+	border-color: #ff4757;
+}
+
+.errorMessage {
+	color: #ff4757;
+	font-size: 0.75rem;
+}
+
+.textarea {
+	resize: vertical;
+}
+
+.submitButton {
+	background: linear-gradient(135deg, #000000 0%, #000000 100%);
+	color: white;
+	border: none;
+	padding: 12px;
+	border-radius: 10px;
+	font-size: 1rem;
+	font-weight: bold;
+	cursor: pointer;
+	transition:
+		transform 0.2s,
+		opacity 0.2s;
+}
+
+.submitButton:hover {
+	transform: translateY(-1px);
+	opacity: 0.9;
+}
+
+.board {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	width: 100%;
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+	.board {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+@media (max-width: 640px) {
+	.board {
+		grid-template-columns: 1fr;
+	}
+}
+
+.column {
+	background: #0080ff;
+	border-radius: 16px;
+	padding: 1rem;
+	min-height: 500px;
+	display: flex;
+	flex-direction: column;
+	box-shadow: 0 2px 10px rgba(167, 135, 135, 0.05);
+}
+
+.columnHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding-bottom: 1rem;
+	border-bottom: 2px solid #e0e0e0;
+	margin-bottom: 1rem;
+}
+
+.columnHeader h2 {
+	font-size: 1.1rem;
+	color: #000000;
+}
+
+.taskCount {
+	background: #8d851a;
+	color: white;
+	padding: 4px 10px;
+	border-radius: 20px;
+	font-size: 0.85rem;
+	font-weight: bold;
+}
+
+.taskList {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 0.75rem;
+}
+
+.emptyMessage {
+	text-align: center;
+	color: #999;
+	padding: 2rem;
+	background: white;
+	border-radius: 12px;
+	font-size: 0.9rem;
+}
+
+.taskCard {
+	background: white;
+	border-radius: 12px;
+	padding: 1rem;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	transition:
+		transform 0.2s,
+		box-shadow 0.2s;
+}
+
+.taskCard:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+}
+
+.taskContent {
+	margin-bottom: 0.75rem;
+}
+
+.taskTitle {
+	font-size: 1rem;
+	color: #333;
+	margin-bottom: 0.5rem;
+	cursor: pointer;
+	word-break: break-word;
+}
+
+.taskTitle:hover {
+	color: #667eea;
+}
+
+.taskDescription {
+	font-size: 0.85rem;
+	color: #666;
+	line-height: 1.4;
+	word-break: break-word;
+}
+
+.editInput {
+	width: 100%;
+	padding: 6px 8px;
+	border: 2px solid #667eea;
+	border-radius: 8px;
+	font-size: 0.95rem;
+	margin-bottom: 0.5rem;
+	font-family: inherit;
+}
+
+.editInput:focus {
+	outline: none;
+}
+
+.taskActions {
+	display: flex;
+	gap: 0.5rem;
+	justify-content: flex-end;
+}
+
+.moveButton {
+	padding: 4px 10px;
+	border: none;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 0.75rem;
+	transition: background 0.2s;
+}
+
+.prevButton {
+	background: #000000;
+	color: white;
+}
+
+.prevButton:hover {
+	background: #6b757c;
+}
+
+.nextButton {
+	background: #00b894;
+	color: white;
+}
+
+.nextButton:hover {
+	background: #00a382;
+}
+
+.deleteButton {
+	background: #ff4757;
+	color: white;
+	border: none;
+	border-radius: 6px;
+	width: 28px;
+	height: 28px;
+	cursor: pointer;
+	font-size: 0.8rem;
+	transition: background 0.2s;
+}
+
+.deleteButton:hover {
+	background: #e84118;
+}
