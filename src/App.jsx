@@ -2,24 +2,26 @@ import React, { useState, useEffect } from "react";
 import Board from "./components/Board";
 import AddTaskForm from "./components/AddTaskForm";
 import useWebSocket from "./hooks/useWebSocket";
+import SearchBar from "./components/SearchBar";
+
 
 const INITIAL_COLUMNS = [
-	{ id: "backlog", title: "Backlog (Новые задачи)", order: 0 },
-	{ id: "ready", title: "Ready (Готовы к выполнению)", order: 1 },
-	{ id: "inProgress", title: "In Progress (В работе)", order: 2 },
-	{ id: "finished", title: "Finished (Завершены)", order: 3 },
+	{ id: "backlog", title: "Backlog (Новые задачи)", order: 0, wipLimit: null },
+	{ id: "ready", title: "Ready (Готовы к выполнению)", order: 1, wipLimit: 3 },
+	{ id: "inProgress", title: "In Progress (В работе)", order: 2, wipLimit: 2 },
+	{ id: "finished", title: "Finished (Завершены)", order: 3, wipLimit: null },
 ];
 
 const INITIAL_TASKS = {
 	backlog: [
 		{
 			id: "1",
-			title: "Изучить React",
+			title: "React",
 			description: "Прочитать документацию",
 		},
 		{
 			id: "2",
-			title: "Настроить проект",
+			title: "Проект",
 			description: "Создать Vite проект",
 		},
 	],
@@ -28,7 +30,7 @@ const INITIAL_TASKS = {
 	finished: [],
 };
 
-// WebSocket сервер (можно использовать публичный тестовый)
+
 const WS_URL = "ws://localhost:8080";
 
 function App() {
@@ -40,12 +42,12 @@ function App() {
 
 	const { isConnected, sendMessage, lastMessage } = useWebSocket(WS_URL);
 
-	// Сохраняем в localStorage
+	
 	useEffect(() => {
 		localStorage.setItem("kanban-tasks", JSON.stringify(tasks));
 	}, [tasks]);
 
-	// Отправляем изменения через WebSocket
+	
 	const syncViaWebSocket = (action, data) => {
 		sendMessage({
 			type: "SYNC",
@@ -56,20 +58,19 @@ function App() {
 		});
 	};
 
-	// Генерация уникального ID пользователя
+
 	const generateUserId = () => {
 		const id = "user_" + Math.random().toString(36).substr(2, 9);
 		localStorage.setItem("userId", id);
 		return id;
 	};
 
-	// Получаем обновления от других пользователей
 	useEffect(() => {
 		if (lastMessage && lastMessage.type === "SYNC") {
 			const { action, data } = lastMessage;
 			const currentUserId = localStorage.getItem("userId");
 
-			// Не обрабатываем свои же сообщения
+
 			if (lastMessage.userId === currentUserId) return;
 
 			console.log("Получено обновление:", action, data);
@@ -130,7 +131,7 @@ function App() {
 			backlog: [newTask, ...prev.backlog],
 		}));
 
-		// Отправляем через WebSocket
+
 		syncViaWebSocket("ADD_TASK", { task: newTask });
 	};
 
@@ -146,7 +147,7 @@ function App() {
 			[toColumn]: [...prev[toColumn], task],
 		}));
 
-		// Отправляем через WebSocket
+
 		syncViaWebSocket("MOVE_TASK", {
 			taskId,
 			fromColumn,
@@ -161,7 +162,7 @@ function App() {
 			[columnId]: prev[columnId].filter((t) => t.id !== taskId),
 		}));
 
-		// Отправляем через WebSocket
+
 		syncViaWebSocket("DELETE_TASK", { taskId, columnId });
 	};
 
@@ -173,7 +174,7 @@ function App() {
 			),
 		}));
 
-		// Отправляем через WebSocket
+
 		syncViaWebSocket("UPDATE_TITLE", { taskId, columnId, newTitle });
 	};
 
@@ -261,4 +262,7 @@ function App() {
 	);
 }
 
+
 export default App;
+
+
