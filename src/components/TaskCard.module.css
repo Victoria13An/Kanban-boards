@@ -142,3 +142,140 @@
 	background: #e84118;
 	transform: scale(1.05);
 }
+
+.assignedUser {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin-top: 10px;
+	margin-bottom: 8px;
+	padding: 6px 10px;
+	background: #f8f9fa;
+	border-radius: 20px;
+	width: fit-content;
+	transition: all 0.2s ease;
+	border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.assignedUser:hover {
+	background: #f0f0f0;
+	transform: scale(1.02);
+}
+
+.userAvatar {
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-weight: bold;
+	font-size: 12px;
+	transition: all 0.2s ease;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.userAvatar:hover {
+	transform: scale(1.1);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.userName {
+	font-size: 12px;
+	font-weight: 500;
+	color: #333;
+	letter-spacing: 0.3px;
+}
+
+.userAvatarOnly {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-weight: bold;
+	font-size: 14px;
+	transition: all 0.2s ease;
+	cursor: pointer;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.userAvatarOnly:hover {
+	transform: scale(1.1);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.multipleUsers {
+	display: flex;
+	gap: 4px;
+	margin-top: 8px;
+	flex-wrap: wrap;
+}
+
+.userBadge {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: white;
+	font-weight: bold;
+	font-size: 10px;
+	transition: all 0.2s ease;
+	cursor: pointer;
+	border: 2px solid white;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.userBadge:hover {
+	transform: translateY(-2px);
+	z-index: 10;
+}
+
+@keyframes avatarAppear {
+	from {
+		opacity: 0;
+		transform: scale(0.5);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.assignedUser {
+	animation: avatarAppear 0.3s ease-out;
+}
+
+.userAvatar,
+.userAvatarOnly,
+.userBadge {
+	animation: avatarAppear 0.2s ease-out;
+}
+
+@media (max-width: 768px) {
+	.assignedUser {
+		padding: 4px 8px;
+		gap: 6px;
+	}
+
+	.userAvatar {
+		width: 24px;
+		height: 24px;
+		font-size: 10px;
+	}
+
+	.userName {
+		font-size: 11px;
+	}
+
+	.userAvatarOnly {
+		width: 28px;
+		height: 28px;
+		font-size: 12px;
+	}
+}

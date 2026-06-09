@@ -1,0 +1,46 @@
+/* src/components/UserSelector.css */
+.users-horizontal {
+	display: flex;
+	gap: 16px;
+	flex-wrap: wrap;
+	padding: 12px;
+}
+
+.user-card {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 8px;
+	border-radius: 12px;
+	background: white;
+	transition: all 0.2s;
+	cursor: pointer;
+}
+
+.user-card:hover {
+	background: #f9f9f9;
+	transform: translateY(-2px);
+}
+
+.user-avatar {
+	width: 48px;
+	height: 48px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 600;
+	font-size: 18px;
+	color: white;
+	cursor: pointer;
+	transition: all 0.2s ease;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.user-name {
+	margin-top: 8px;
+	font-size: 12px;
+	color: #333;
+	text-align: center;
+	font-weight: 500;
+}

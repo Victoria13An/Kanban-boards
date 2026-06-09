@@ -2,13 +2,33 @@ import React, { useState, useEffect } from "react";
 import Board from "./components/Board";
 import AddTaskForm from "./components/AddTaskForm";
 import useWebSocket from "./hooks/useWebSocket";
-import SearchBar from "./components/SearchBar";
+import "./App.css";
 
+const USERS = [
+	{ id: "user1", name: "Vova", initials: "V", color: "#F54927" },
+	{ id: "user2", name: "Lola", initials: "L", color: "#E075D0" },
+	{ id: "user3", name: "Oleg", initials: "O", color: "#2cb494" },
+];
 
 const INITIAL_COLUMNS = [
-	{ id: "backlog", title: "Backlog (Новые задачи)", order: 0, wipLimit: null },
-	{ id: "ready", title: "Ready (Готовы к выполнению)", order: 1, wipLimit: 3 },
-	{ id: "inProgress", title: "In Progress (В работе)", order: 2, wipLimit: 2 },
+	{
+		id: "backlog",
+		title: "Backlog (Новые задачи)",
+		order: 0,
+		wipLimit: null,
+	},
+	{
+		id: "ready",
+		title: "Ready (Готовы к выполнению)",
+		order: 1,
+		wipLimit: 3,
+	},
+	{
+		id: "inProgress",
+		title: "In Progress (В работе)",
+		order: 2,
+		wipLimit: 2,
+	},
 	{ id: "finished", title: "Finished (Завершены)", order: 3, wipLimit: null },
 ];
 
@@ -18,18 +38,23 @@ const INITIAL_TASKS = {
 			id: "1",
 			title: "React",
 			description: "Прочитать документацию",
+			comments: [],
+			assignedTo: null,
+			createdAt: new Date().toISOString(),
 		},
 		{
 			id: "2",
 			title: "Проект",
 			description: "Создать Vite проект",
+			comments: [],
+			assignedTo: null,
+			createdAt: new Date().toISOString(),
 		},
 	],
 	ready: [],
 	inProgress: [],
 	finished: [],
 };
-
 
 const WS_URL = "ws://localhost:8080";
 
@@ -42,12 +67,16 @@ function App() {
 
 	const { isConnected, sendMessage, lastMessage } = useWebSocket(WS_URL);
 
-	
 	useEffect(() => {
 		localStorage.setItem("kanban-tasks", JSON.stringify(tasks));
 	}, [tasks]);
 
-	
+	const generateUserId = () => {
+		const id = "user_" + Math.random().toString(36).substr(2, 9);
+		localStorage.setItem("userId", id);
+		return id;
+	};
+
 	const syncViaWebSocket = (action, data) => {
 		sendMessage({
 			type: "SYNC",
@@ -58,19 +87,10 @@ function App() {
 		});
 	};
 
-
-	const generateUserId = () => {
-		const id = "user_" + Math.random().toString(36).substr(2, 9);
-		localStorage.setItem("userId", id);
-		return id;
-	};
-
 	useEffect(() => {
 		if (lastMessage && lastMessage.type === "SYNC") {
 			const { action, data } = lastMessage;
 			const currentUserId = localStorage.getItem("userId");
-
-
 			if (lastMessage.userId === currentUserId) return;
 
 			console.log("Получено обновление:", action, data);
@@ -82,7 +102,6 @@ function App() {
 						backlog: [data.task, ...prev.backlog],
 					}));
 					break;
-
 				case "MOVE_TASK":
 					setTasks((prev) => ({
 						...prev,
@@ -92,7 +111,6 @@ function App() {
 						[data.toColumn]: [...prev[data.toColumn], data.task],
 					}));
 					break;
-
 				case "DELETE_TASK":
 					setTasks((prev) => ({
 						...prev,
@@ -101,7 +119,6 @@ function App() {
 						),
 					}));
 					break;
-
 				case "UPDATE_TITLE":
 					setTasks((prev) => ({
 						...prev,
@@ -112,48 +129,39 @@ function App() {
 						),
 					}));
 					break;
-
 				default:
 					break;
 			}
 		}
 	}, [lastMessage]);
 
-	const addTask = (title, description) => {
+	// Функции для работы с задачами
+	const addTask = (title, description, assignedUser) => {
 		const newTask = {
 			id: Date.now().toString(),
 			title,
 			description,
+			assignedTo: assignedUser,
+			comments: [],
+			createdAt: new Date().toISOString(),
 		};
-
 		setTasks((prev) => ({
 			...prev,
 			backlog: [newTask, ...prev.backlog],
 		}));
-
-
 		syncViaWebSocket("ADD_TASK", { task: newTask });
 	};
 
 	const moveTask = (taskId, fromColumn, toColumn) => {
 		if (fromColumn === toColumn) return;
-
 		const task = tasks[fromColumn].find((t) => t.id === taskId);
 		if (!task) return;
-
 		setTasks((prev) => ({
 			...prev,
 			[fromColumn]: prev[fromColumn].filter((t) => t.id !== taskId),
 			[toColumn]: [...prev[toColumn], task],
 		}));
-
-
-		syncViaWebSocket("MOVE_TASK", {
-			taskId,
-			fromColumn,
-			toColumn,
-			task,
-		});
+		syncViaWebSocket("MOVE_TASK", { taskId, fromColumn, toColumn, task });
 	};
 
 	const deleteTask = (taskId, columnId) => {
@@ -161,8 +169,6 @@ function App() {
 			...prev,
 			[columnId]: prev[columnId].filter((t) => t.id !== taskId),
 		}));
-
-
 		syncViaWebSocket("DELETE_TASK", { taskId, columnId });
 	};
 
@@ -173,14 +179,27 @@ function App() {
 				task.id === taskId ? { ...task, title: newTitle } : task,
 			),
 		}));
-
-
 		syncViaWebSocket("UPDATE_TITLE", { taskId, columnId, newTitle });
+	};
+
+	const updateTaskComments = (taskId, comments) => {
+		setTasks((prev) => {
+			const updatedTasks = { ...prev };
+			for (const column in updatedTasks) {
+				const taskIndex = updatedTasks[column].findIndex(
+					(t) => t.id === taskId,
+				);
+				if (taskIndex !== -1) {
+					updatedTasks[column][taskIndex].comments = comments;
+					break;
+				}
+			}
+			return updatedTasks;
+		});
 	};
 
 	const getFilteredTasks = (columnId) => {
 		if (!searchQuery.trim()) return tasks[columnId];
-
 		const query = searchQuery.toLowerCase();
 		return tasks[columnId].filter(
 			(task) =>
@@ -247,7 +266,7 @@ function App() {
 			</header>
 
 			<div style={{ marginBottom: "20px" }}>
-				<AddTaskForm onAdd={addTask} />
+				<AddTaskForm onAdd={addTask} users={USERS} />
 			</div>
 
 			<Board
@@ -257,12 +276,11 @@ function App() {
 				onMoveTask={moveTask}
 				onDeleteTask={deleteTask}
 				onUpdateTaskTitle={updateTaskTitle}
+				onUpdateComments={updateTaskComments}
+				users={USERS}
 			/>
 		</div>
 	);
 }
 
-
 export default App;
-
-
